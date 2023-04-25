@@ -14,11 +14,11 @@
 /* below is character of test benchmark*/
 
 #ifndef NUM_TUPLES_R
-#define NUM_TUPLES_R 1200000
+#define NUM_TUPLES_R 1048576
 #endif
 //Max tuples that one rank can hold is 320000
 #ifndef NUM_TUPLES_S
-#define NUM_TUPLES_S 1200000
+#define NUM_TUPLES_S 1048576
 #endif
 
 //create microbenchmark for relation R and S

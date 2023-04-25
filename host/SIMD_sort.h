@@ -6,4 +6,7 @@ void bitonic_8_4u(uint32_t * const arr);
 
 void bitonic_4_8u(uint64_t * const arr);
 
+void SIMD_relation_sort(relation_t* r);
+
+
 #endif

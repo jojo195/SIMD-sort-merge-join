@@ -39,8 +39,8 @@ typedef struct threadresult_t threadresult_t;
 
 /** Type definition for a tuple, depending on KEY_8B a tuple can be 16B or 8B */
 struct tuple_t {
-    intkey_t key;
     value_t  payload;
+    intkey_t key;
 };
 
 struct output_tuple_t {

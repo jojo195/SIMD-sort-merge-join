@@ -20,7 +20,7 @@
 
 #include"generator.h"
 #include"SIMD_sort.h"
-#include"quick_sort.h"
+#include"normal_sort.h"
 #include <immintrin.h>
 
 /** computes and returns the histogram size for join */
@@ -45,6 +45,9 @@ int32_t Host_histogram_join(relation_t* R, relation_t* S, relation_t* tmpR, outp
 uint32_t Host_quicksort_merge_join(relation_t* R, relation_t* S, output_relation_t* output);
 
 uint32_t Host_SIMDsort_merge_join(relation_t* R, relation_t* S, output_relation_t* output);
+
+uint32_t Host_mergesort_merge_join(relation_t* R, relation_t* S, output_relation_t* output);
+
 
 
 // Main of the Host Application
@@ -86,7 +89,8 @@ int main(int argc, char **argv) {
         stop(&timer, 1);
         printf("Host_quicksort_merge_join...\n");
         start(&timer, 2, 1);
-        checksum_cpu = Host_quicksort_merge_join(&R_rel, &S_rel, output_host);
+        // checksum_cpu = Host_quicksort_merge_join(&R_rel, &S_rel, output_host);
+        // checksum_cpu = Host_mergesort_merge_join(&R_rel, &S_rel, output_host);
         printf("cpu quicksort merge join match number: %d\n", checksum_cpu);
         stop(&timer, 2);
         printf("Host_SIMDsort_merge_join...\n");
@@ -94,8 +98,6 @@ int main(int argc, char **argv) {
         checksum_cpu = Host_SIMDsort_merge_join(&R_rel, &S_rel, output_host);
         printf("cpu SIMDsort merge join match number: %d\n", checksum_cpu);
         stop(&timer, 3);
-
-
     }
     // Print timing results
     printf("histogram_join ");
@@ -246,7 +248,88 @@ uint32_t Host_quicksort_merge_join(relation_t* R, relation_t* S, output_relation
     return matches;
 }
 
+uint32_t Host_mergesort_merge_join(relation_t* R, relation_t* S, output_relation_t* output)
+{
+    uint32_t matches = 0;
+    Mergesort_relation(R);
+    Mergesort_relation(S);
+    int R_index = 0, S_index = 0;
+    //a simple stack implement for multiple same key, store the bottom of stack
+    int R_s_index = 0;
+    while((R_index < NUM_TUPLES_R) && (S_index < NUM_TUPLES_S))
+    {
+        R_s_index = R_index;
+        R_index++;
+        //variable mark the completement of scanning of R relation
+        char done = false;
+        while(!done && R_index < NUM_TUPLES_R)
+        {
+            if(R->tuples[R_index].key == R->tuples[R_s_index].key)
+            {
+                R_index++;
+            }
+            else
+            {
+                done = true;
+            }
+        }
+        while(S_index < NUM_TUPLES_S && S->tuples[S_index].key < R->tuples[R_s_index].key)
+        {
+            S_index++;
+        }
+        while(S_index < NUM_TUPLES_S && S->tuples[S_index].key == R->tuples[R_s_index].key)
+        {
+            int R_tmp_index = R_s_index;
+            while(R_tmp_index != R_index)
+            {
+                matches++;
+                R_tmp_index++;
+            }
+            S_index++;
+        }
+    }
+    return matches;
+}
+
 uint32_t Host_SIMDsort_merge_join(relation_t* R, relation_t* S, output_relation_t* output)
 {
-    return 0;
+    uint32_t matches = 0;
+    SIMD_relation_sort(R);
+    SIMD_relation_sort(S);
+    int R_index = 0, S_index = 0;
+    //a simple stack implement for multiple same key, store the bottom of stack
+    int R_s_index = 0;
+    while((R_index < NUM_TUPLES_R) && (S_index < NUM_TUPLES_S))
+    {
+        R_s_index = R_index;
+        R_index++;
+        //variable mark the completement of scanning of R relation
+        char done = false;
+        while(!done && R_index < NUM_TUPLES_R)
+        {
+            if(R->tuples[R_index].key == R->tuples[R_s_index].key)
+            {
+                R_index++;
+            }
+            else
+            {
+                done = true;
+            }
+        }
+        while(S_index < NUM_TUPLES_S && S->tuples[S_index].key < R->tuples[R_s_index].key)
+        {
+            S_index++;
+        }
+        while(S_index < NUM_TUPLES_S && S->tuples[S_index].key == R->tuples[R_s_index].key)
+        {
+            int R_tmp_index = R_s_index;
+            while(R_tmp_index != R_index)
+            {
+                matches++;
+                R_tmp_index++;
+            }
+            S_index++;
+        }
+    }
+    return matches;
 }
