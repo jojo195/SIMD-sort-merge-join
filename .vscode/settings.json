@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "immintrin.h": "c",
+        "simd_sort.h": "c",
+        "stdint.h": "c"
+    }
+}

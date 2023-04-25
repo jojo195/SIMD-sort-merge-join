@@ -1,0 +1,19 @@
+first R rel key: 52
+second S rel key: 978
+Allocated 1 DPU(s)
+NR_TASKLETS	4	BL	10
+Executing on cpu...
+sizeof hist = 16384cpu hash join match number: 140832
+Dpu load data
+Run program on DPU(s) 
+Retrieve results
+dpu hash join match number: 140832
+Display DPU Logs
+DPU#0:
+tasklet_id = 0
+tasklet_id = 1
+tasklet_id = 2
+tasklet_id = 3
+Simple join: 
+DPU cycles  = 0 cc
+CPU Time (ms): 122.978000	CPU-DPU Time (ms): 1.170000	DPU Kernel Time (ms): 41871.883000	DPU-CPU Time (ms): 0.145000	
