@@ -27,7 +27,7 @@
 //temporerily set unique key for R relation
 #ifndef MAX_ID_LOG2
 #define MAX_ID_LOG2 16
-#define MAX_ID (NUM_TUPLES_R >> 4)
+#define MAX_ID (NUM_TUPLES_R >> 1)
 #endif
 
 /* below is character of hash calculation */

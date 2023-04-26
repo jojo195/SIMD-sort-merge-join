@@ -2,6 +2,7 @@ HOST_DIR := host
 BUILDDIR ?= bin
 OP ?= ADD
 TYPE ?= INT32
+ALGORITHM ?= SORT_NETWORK_8
 
 HOST_TARGET := ${BUILDDIR}/host_code
 
@@ -15,7 +16,7 @@ __dirs := $(shell mkdir -p ${BUILDDIR})
 HOST_LIB_LINKED := -lm -lpthread -march=native
 
 COMMON_FLAGS := -Wall -Wextra -g -I${COMMON_INCLUDES}
-HOST_FLAGS := ${COMMON_FLAGS} -std=c11 -O0
+HOST_FLAGS := ${COMMON_FLAGS} -std=c11 -O0 -D${ALGORITHM}
 
 all: ${HOST_TARGET}
 

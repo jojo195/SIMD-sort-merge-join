@@ -77,37 +77,35 @@ int main(int argc, char **argv) {
     for(int rep = 0; rep < p.n_reps; rep++) {
 
         // Compute output on CPU (performance comparison and verification purposes)
-        printf("Host_histogram_join...\n");
+        printf("join start...\n");
         start(&timer, 0, 1);
+    #ifdef HISTOGRAM
         checksum_cpu = Host_histogram_join(&R_rel, &S_rel, &tmpR, output_host);
-        printf("cpu hash join match number: %d\n", checksum_cpu);
-        stop(&timer, 0);
-        printf("Host_nested_loop_join...\n");
-        start(&timer, 1, 1);
-        // checksum_cpu = Host_nested_loop_join(&R_rel, &S_rel, output_host);
-        printf("cpu nested loop join match number: %d\n", checksum_cpu);
-        stop(&timer, 1);
-        printf("Host_quicksort_merge_join...\n");
-        start(&timer, 2, 1);
-        // checksum_cpu = Host_quicksort_merge_join(&R_rel, &S_rel, output_host);
-        // checksum_cpu = Host_mergesort_merge_join(&R_rel, &S_rel, output_host);
-        printf("cpu quicksort merge join match number: %d\n", checksum_cpu);
-        stop(&timer, 2);
-        printf("Host_SIMDsort_merge_join...\n");
-        start(&timer, 3, 1);
+    #endif
+    #ifdef QUICK_SORT
+        checksum_cpu = Host_quicksort_merge_join(&R_rel, &S_rel, output_host);
+    #endif
+    #ifdef SORT_MERGE
         checksum_cpu = Host_SIMDsort_merge_join(&R_rel, &S_rel, output_host);
-        printf("cpu SIMDsort merge join match number: %d\n", checksum_cpu);
-        stop(&timer, 3);
+    #endif
+    #ifdef SORT_NETWORK_4
+        checksum_cpu = Host_SIMDsort_merge_join(&R_rel, &S_rel, output_host);
+    #endif
+    #ifdef SORT_NETWORK_8
+        checksum_cpu = Host_SIMDsort_merge_join(&R_rel, &S_rel, output_host);
+    #endif
+        printf("cpu join match number: %d\n", checksum_cpu);
+        stop(&timer, 0);
     }
     // Print timing results
-    printf("histogram_join ");
+    printf("join time(ms): ");
     print(&timer, 0, p.n_reps);
-    printf("nested loop join ");
-    print(&timer, 1, p.n_reps);
-    printf("quicksort merge join ");
-    print(&timer, 2, p.n_reps);
-    printf("SIMDsort merge join ");
-    print(&timer, 3, p.n_reps);
+    // printf("nested loop join ");
+    // print(&timer, 1, p.n_reps);
+    // printf("quicksort merge join ");
+    // print(&timer, 2, p.n_reps);
+    // printf("SIMDsort merge join ");
+    // print(&timer, 3, p.n_reps);
     printf("\n");
     // TODO: Check output
     bool status = true;

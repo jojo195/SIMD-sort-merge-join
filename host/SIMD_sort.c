@@ -252,11 +252,20 @@ void merge_tuple_SIMD(tuple_t* arr, tuple_t* tmp_L, tuple_t* tmp_R, int l, int m
 // of arr to be sorted
 void Mergesort_tuple_SIMD(tuple_t* arr, tuple_t* tmp_L, tuple_t* tmp_R, int l, int r)
 {
-    if((r-l+1)==8)
+#ifdef SORT_NETWORK_4
+    if((r-l+1)==4)
     {
         sort_4_tuples(arr+l);
         return;
     }
+#endif
+#ifdef SORT_NETWORK_8
+    if((r-l+1)==8)
+    {
+        sort_8_tuples(arr+l);
+        return;
+    }
+#endif
 	if (l < r)
 	{
 		// Same as (l+r)/2, but avoids
